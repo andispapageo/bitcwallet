@@ -1,0 +1,22 @@
+{
+    "Items": {
+      "Item322A": [{
+        "prop1": "string",
+        "prop2": "string",
+        "prop3": 1,
+        "prop4": false
+      },{
+        "prop1": "string",
+        "prop2": "string",
+        "prop3": 0,
+        "prop4": false
+      }],
+         "Item2B": [{
+        "prop1": "string",
+        "prop2": "string",
+        "prop3": 14,
+        "prop4": true
+      }]
+    },
+    "Errors": ["String"]
+  }

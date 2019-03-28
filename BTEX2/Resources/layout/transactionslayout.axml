@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+	android:layout_margin="5dp"
+    android:layout_height="match_parent">
+			<TextView
+		   
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:id="@+id/monersfees" />
+	   <android.support.design.widget.TextInputLayout
+            android:id="@+id/fromadd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText             
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="From" />
+
+        </android.support.design.widget.TextInputLayout>
+	 <android.support.design.widget.TextInputLayout
+            android:id="@+id/toadd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="To" />
+        </android.support.design.widget.TextInputLayout>
+    <android.support.v7.widget.RecyclerView
+		android:layout_marginTop="1dp"
+		android:layout_width="match_parent"
+		android:layout_height="300dp"
+	    android:scrollbars="vertical"
+	    android:background="#10000000"
+		android:id="@+id/recycleList" />
+	<LinearLayout
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	 <android.support.design.widget.TextInputLayout
+            android:id="@+id/toadd"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+		        android:inputType="numberDecimal"
+                android:layout_gravity="center"
+                android:hint="Amount to Send" />
+        </android.support.design.widget.TextInputLayout>
+	<Button
+		android:text="Send"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/sendButton" />
+	<Button
+		android:text="Toggle"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:id="@+id/toggle" />
+		</LinearLayout>
+</LinearLayout>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+	 <LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+	    android:id="@+id/mainlay"
+        android:layout_gravity="center">
+			<TextView
+			android:text="PumaPay"
+		     android:textColor="@android:color/holo_blue_light"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:minWidth="25px"
+			android:minHeight="25px"
+		    android:layout_margin="5dp"
+			android:id="@+id/title" /> 
+	       <TextView
+			android:text="Welcome to blockchain,if this is the first time for creating a wallet please press login mnemonic to create a bitcoin wallet."
+		    android:textColor="@android:color/holo_blue_light"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:minWidth="25px"
+			android:minHeight="25px"
+		    android:layout_margin="5dp"
+			android:id="@+id/textView1" />
+        <android.support.design.widget.TextInputLayout
+          android:layout_width="350dp"
+		   android:id="@+id/txtInputLayoutUsername"
+            android:layout_height="wrap_content">
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+			    android:textColor="@android:color/white"
+			    android:textColorHint="@android:color/white"
+                android:inputType="textEmailAddress"
+                android:hint="Username" />
+
+        </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/txtInputLayoutPassword"
+            android:layout_width="match_parent"
+	        android:textColor="@android:color/white"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/txtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:inputType="textPassword"
+			    android:textColor="@android:color/white"
+			    android:textColorHint="@android:color/white"
+                android:hint="Password" />
+        </android.support.design.widget.TextInputLayout>
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Login" />
+	  <Button
+            android:id="@+id/btnRestore"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Restore" />
+    </LinearLayout>
