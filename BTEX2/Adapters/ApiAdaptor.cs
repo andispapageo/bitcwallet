@@ -1,12 +1,9 @@
-﻿using System;
-
+using System;
 using Android.Views;
 using Android.Widget;
 using Android.Support.V7.Widget;
-
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
 namespace BitCWallet.Adapters
 {
     class ApiAdaptor : RecyclerView.Adapter
@@ -30,7 +27,6 @@ namespace BitCWallet.Adapters
             public string BaseCurrencyLong { get; set; }
             public string MinTradeSize { get; set; }
             public string IsActive { get; set; }
-
         }
 
         public class RootObject
@@ -67,16 +63,7 @@ namespace BitCWallet.Adapters
        
         public override int ItemCount => items.Count;
         void OnClick(ApiAdaptorClickEventArgs args) => ItemClick?.Invoke(this, args);
-        void OnLongClick(ApiAdaptorClickEventArgs args) => ItemLongClick?.Invoke(this, args);
-        internal void Update(List<Result> root)
-        {
-            MainActivity.act.RunOnUiThread(() =>
-            {
-                items = root;
-                this.NotifyDataSetChanged();
-            });
-        }
-
+        void OnLongClick(ApiAdaptorClickEventArgs args) => ItemLongClick?.Invoke(this, args);     
     }
 
     public class ApiAdaptorViewHolder : RecyclerView.ViewHolder
@@ -91,8 +78,11 @@ namespace BitCWallet.Adapters
             TextView2 = itemView.FindViewById(Resource.Id.textView2) as TextView;
             TextView3 = itemView.FindViewById(Resource.Id.textView3) as TextView;
             TextView4 = itemView.FindViewById(Resource.Id.textView4) as TextView;
-            itemView.Click += (sender, e) => clickListener(new ApiAdaptorClickEventArgs { View = itemView, Position = AdapterPosition });
-            itemView.LongClick += (sender, e) => longClickListener(new ApiAdaptorClickEventArgs { View = itemView, Position = AdapterPosition });
+            itemView.Click += (sender, e) => 
+            clickListener(new ApiAdaptorClickEventArgs { View = itemView, Position = AdapterPosition });
+            
+            itemView.LongClick += (sender, e) 
+            => longClickListener(new ApiAdaptorClickEventArgs { View = itemView, Position = AdapterPosition });
         }
     }
 
