@@ -74,8 +74,7 @@ namespace BitCWallet
             crypto.GetNonZeroBytes(data);
             return data;
         }
-
-
+        
         public class AEScustom //Advanced Encryption Standard 
         {
 
@@ -121,12 +120,10 @@ namespace BitCWallet
             }
         }
 
-
         public string ArrayToString(byte[] ba)
         {
             return BitConverter.ToString(ba).Replace("-", "");
         }
-
 
         public class XTF
         {
@@ -167,8 +164,8 @@ namespace BitCWallet
                 t = (t * 0x1000000);
                 r += t;
                 return (uint)r;
-
             }
+            
             internal void Encode(ref byte[] ba, int start, int count)
             {
                 uint v0, v1;
@@ -189,16 +186,13 @@ namespace BitCWallet
                     ba[i + 6] = (byte)((result[1] & 0xff0000) / 0x10000);
                     ba[i + 7] = (byte)((result[1] & 0xff000000) / 0x1000000);
                 }
-
             }
 
             internal uint[] EncodeLong(UInt32 v0, UInt32 v1)
             {
 
                 uint r1, r2, sum;
-                byte i;
-
-                sum = 0;
+                byte i; sum = 0;
                 for (i = 1; i <= 32; i++)
                 {
                     r1 = Add32(((v1 << 4) ^ (v1 >> 5)), v1);
@@ -211,10 +205,9 @@ namespace BitCWallet
                     r2 = Add32(sum, xteakey[(sum >> 11) & 3]);
                     v1 = Add32(v1, r1 ^ r2);
                 }
-
                 return new uint[] { v0, v1 };
-
             }
+            
             internal uint[] DecodeLong(uint i0, uint i1)
             {
 
@@ -227,40 +220,30 @@ namespace BitCWallet
                     sum = Sub32(sum, delta);
                     i0 = Sub32(i0, Add32(((i1 << 4) ^ (i1 >> 5)), i1) ^ Add32(sum, xteakey[sum & 3]));
                 }
-
                 return new uint[] { i0, i1 };
-
             }
-
 
             private uint Mul32(uint x, uint y)
             {
-
                 ulong x64 = x;
                 ulong y64 = y;
-
                 return (uint)((x64 * y64) & uint.MaxValue);
-
             }
+            
             private uint Sub32(uint x, uint y)
             {
-
                 ulong x64 = (ulong)x + 0x100000000L;
                 ulong y64 = y;
-
                 return (uint)((x64 - y64) & uint.MaxValue);
-
             }
+            
             private uint Add32(uint x, uint y)
             {
 
                 ulong x64 = x;
                 ulong y64 = y;
-
                 return Convert.ToUInt32((x64 + y64) & UInt32.MaxValue);
-
             }
-
         }
     }
 }
