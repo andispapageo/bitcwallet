@@ -10,22 +10,6 @@ namespace BitCWallet
 {
     public class Encryption
     {
-
-        public int CreateRandom_Key()
-        {
-            var reA = Encoding.ASCII.GetBytes("PMABitcoinWallet");
-            var nA = BytesToInt(ref reA, 0, reA.Length);
-            return Math.Abs(KeyEncryption(nA, "3227d1573b8c5f6d2a7e361218c31b4c"));//Any 32 byte 
-        }
-
-        const string key = "5252a2561c2f1f52a2b7e361218c31b4c";
-        int KeyBc;
-        public bool success { get; set; }
-        private string exception { get; set; }
-        public AEScustom AES;
-        public Encryption() { }
-        public Encryption(string mtext) : this(mtext, key) { }
-
         internal static byte[] CreateRandomSalt()
         {
             var random = SecureRandom.GetInstance("SHA256PRNG");
@@ -48,8 +32,7 @@ namespace BitCWallet
                 AES.Padding = PaddingMode.PKCS7;
                 AES.IV = iv;
                 enc = AES.Encrypt(plain);
-                s = ToHex(ref iv, 0, 16, string.Empty) + ToHex(ref enc, 0, enc.Length, string.Empty); success = true;
-                if (success) MainActivity.Preferences.Edit().PutString("token", s).Apply();
+              
             }
             catch (Exception e) when (e is Exception || e is CryptographicUnexpectedOperationException)
             {
@@ -57,26 +40,6 @@ namespace BitCWallet
                 exception = e.Message;
                 return;
             }
-
-        }
-        public static string Decrypt(string cipherStr)
-        {
-            if (string.IsNullOrEmpty(cipherStr)) return "";
-            AEScustom AES = new AEScustom
-            {
-                Mode =
-                CipherMode.CBC,
-                Padding = PaddingMode.PKCS7,
-                Key = Hex2Bytes(key),
-                IV = new byte[16]
-            };
-
-            var bytes = Hex2Bytes(cipherStr);
-            Array.Copy(bytes, 0, AES.IV, 0, 16);
-            byte[] cipher = new byte[bytes.Length - 16];
-            Array.Copy(bytes, 16, cipher, 0, bytes.Length - 16);
-            var Decrypted = AES.Decrypt(cipher);
-            return BytesToString(ref Decrypted).Replace("\0", string.Empty);
         }
 
         internal int KeyEncryption(int msg, string enckey)
@@ -112,25 +75,8 @@ namespace BitCWallet
             return data;
         }
 
-        public byte[] IntToBytes(int i, bool bigendian = true)
-        {
-            byte[] ba = BitConverter.GetBytes(i);
-            if (bigendian) Array.Reverse(ba);
-            return ba;
-        }
 
-        internal int BytesToInt(ref byte[] array, int start, int count, bool bigendian = true)
-        {
-            if (start + count > array.Length) return 0;
-            int res;
-            byte[] ba = new byte[array.Length];
-            Array.Copy(array, start, ba, 0, count);
-            if (bigendian) Array.Reverse(ba);
-            try { res = BitConverter.ToInt32(ba, 0); } catch (Exception e) { return 0; }
-            return BitConverter.ToInt32(ba, 0);
-        }
-
-        public class AEScustom //Advanced Encryption Standard (AES)
+        public class AEScustom //Advanced Encryption Standard 
         {
 
             RijndaelManaged AES = new RijndaelManaged();
@@ -147,39 +93,7 @@ namespace BitCWallet
                 return Encrypt(plain, 0, plain.Length);
             }
 
-            public byte[] Encrypt(byte[] plain, int start, int length)
-            {
-
-                AES.Mode = Mode;
-                AES.Padding = Padding;
-                encryptor = AES.CreateEncryptor(Key, IV);
-                memStream = new MemoryStream();
-                using (crStream = new CryptoStream(memStream, encryptor, CryptoStreamMode.Write))
-                {
-                    crStream.Write(plain, start, length);
-                    crStream.FlushFinalBlock();
-                }
-                byte[] enc = memStream.ToArray();
-                memStream.Close();
-                crStream.Close();
-                return enc;
-            }
-
-            public byte[] Decrypt(byte[] ciphertext)
-            {
-
-                AES.Mode = Mode;
-                AES.Padding = Padding;
-                decryptor = AES.CreateDecryptor(Key, IV);
-                memStream = new MemoryStream(ciphertext);
-                crStream = new CryptoStream(memStream, decryptor, CryptoStreamMode.Read);
-                byte[] dec = new byte[ciphertext.Length - 1 + 1];
-                crStream.Read(dec, 0, dec.Length);
-                memStream.Close();
-                crStream.Close();
-                return dec;
-            }
-
+         
             public byte[] Decrypt(byte[] ciphertext, byte[] Keym, byte[] IVm)
             {
 
@@ -196,46 +110,8 @@ namespace BitCWallet
             }
         }
 
-        internal static string BytesToString(ref byte[] ba, int start, int count)
+        public static class nvo  //general crypto functions
         {
-            int i;
-
-            if (start < 0) return "";
-            if (start >= ba.Length) return "";
-            if (start + count > ba.Length) count = ba.Length - start;
-
-            string s = "";
-            for (i = start; i <= start + count - 1; i++) { s += (char)(ba[i]); }
-            return s;
-        }
-
-        internal static string BytesToString(ref byte[] ba)
-        {
-            return BytesToString(ref ba, 0, ba.Length);
-        }
-
-        internal static byte[] StringToBytes(ref string s)
-        {
-            return new UTF8Encoding().GetBytes(s);
-        }
-
-        public static class crypto  //general crypto functions
-        {
-            public static string GetCryptoString(int size)
-            {
-                char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
-                var crypto = new RNGCryptoServiceProvider();
-                byte[] data = new byte[size + 1];
-                string s = string.Empty;
-
-                crypto.GetNonZeroBytes(data);
-                foreach (byte b in data)
-                    s = s + chars[b % chars.Length];
-
-                return s;
-
-            }
-
             public static byte[] GetRandomBytes(int size)
             {
                 RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider();
@@ -245,39 +121,6 @@ namespace BitCWallet
             }
         }
 
-        internal static bool HexToByte(string hex, out byte result)
-        {
-            return byte.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out result);
-        }
-
-        internal static byte[] Hex2Bytes(string hex)
-        {
-            Hex2Bytes(hex, out byte[] res);
-            return res;
-        }
-
-        internal static bool Hex2Bytes(string hex, out byte[] res)
-        {
-            hex = hex.Replace(" ", "").Replace("-", "").Trim();
-            res = new byte[hex.Length / 2];
-
-            for (int i = 0; i < res.Length; i++)
-            {
-                if (!HexToByte(hex.Substring(i * 2, 2), out byte b)) return false;
-                res[i] = b;
-            }
-            return true;
-        }
-
-        internal string ToHex(ref byte[] array, int start, int len, string sep)
-        {
-            return BitConverter.ToString(array, start, len).Replace("-", sep);
-        }
-
-        internal int ToHexInt(ref byte[] array, int start, int len, string sep)
-        {
-            return BitConverter.ToInt16(array, start);
-        }
 
         public string ArrayToString(byte[] ba)
         {
@@ -285,19 +128,13 @@ namespace BitCWallet
         }
 
 
-        public class XTEA
+        public class XTF
         {
-
             private uint[] xteakey = new uint[4];
-            /// <summary>
-            /// The delta is derived from the golden ratio where delta = (sqrt(2) - 1) * 2^31
-            /// A different multiple of delta is used in each round so that no bit of
-            /// the multiple will not change frequently
-            /// </summary>
             private const uint delta = 2654435769;
 
-            public XTEA() { }
-            public XTEA(uint k0, uint k1, uint k2, uint k3)
+            public XTF() { }
+            public XTF(uint k0, uint k1, uint k2, uint k3)
             {
                 SetKey(k0, k1, k2, k3);
                 byte[] array = new byte[4] { (byte)k0, (byte)k1, (byte)k2, (byte)k3 };
@@ -355,28 +192,6 @@ namespace BitCWallet
 
             }
 
-            internal void Decode(ref byte[] ba)
-            {
-                uint v0, v1;
-                uint[] result;
-                int i;
-
-                for (i = 0; i <= ba.Length - 1; i += 8)
-                {
-                    v0 = BA2Uint(ref ba, i);
-                    v1 = BA2Uint(ref ba, i + 4);
-                    result = DecodeLong(v0, v1);
-                    ba[i] = (byte)(result[0] & 0xff);
-                    ba[i + 1] = (byte)((result[0] & 0xff00) / 0x100);
-                    ba[i + 2] = (byte)((result[0] & 0xff0000) / 0x10000);
-                    ba[i + 3] = (byte)((result[0] & 0xff000000) / 0x1000000);
-                    ba[i + 4] = (byte)(result[1] & 0xff);
-                    ba[i + 5] = (byte)((result[1] & 0xff00) / 0x100);
-                    ba[i + 6] = (byte)((result[1] & 0xff0000) / 0x10000);
-                    ba[i + 7] = (byte)((result[1] & 0xff000000) / 0x1000000);
-                }
-
-            }
             internal uint[] EncodeLong(UInt32 v0, UInt32 v1)
             {
 
