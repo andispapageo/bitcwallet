@@ -38,11 +38,7 @@ namespace BitCWallet
         public static WalletsInfo walletInfo;
         public static MainActivity act { get; set; }
         public bool mSignInClicked { get; private set; }
-
-
         public static NBitcoin.Network net = NBitcoin.Network.TestNet;
-
-
         static InitialisePages pg;
         public Encryption enc;
         public static NFragmentManager fm;
@@ -50,7 +46,8 @@ namespace BitCWallet
         static List<NFragment> listofpages;
         public static GoogleApiClient mGoogleApiClient;
         static CustomFragmentAdapter adapter;
-        public static ISharedPreferences Preferences = Application.Context.GetSharedPreferences("m", FileCreationMode.Private);
+        public static ISharedPreferences Preferences 
+        = Application.Context.GetSharedPreferences("m", FileCreationMode.Private);
 
         BarcodeDetector barcodeDetector;
         CameraSource cameraSource;
@@ -58,10 +55,9 @@ namespace BitCWallet
         public static bool WIFI { get; set; }
         ConnectionResult mConnectionResult;
         private bool mIntentinProgress;
-
         const int RequestCameraPermisionID = 1001;
         private bool mInfoPopulated;
-
+        
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public static string words
         {
@@ -125,109 +121,6 @@ namespace BitCWallet
             return false;
         }
 
-        public void OnConnected(Bundle connectionHint)
-        {
-            mSignInClicked = false;
-            if (mInfoPopulated)
-            {
-                return;
-            }
-            if (PlusClass.PeopleApi.GetCurrentPerson(mGoogleApiClient) != null)
-            {
-                IPerson plusUser = PlusClass.PeopleApi.GetCurrentPerson(mGoogleApiClient);
-
-                if (plusUser.HasDisplayName)
-                {
-                    //mName.Text += plusUser.DisplayName;
-                }
-
-                if (plusUser.HasTagline)
-                {
-                    // mTagline.Text += plusUser.Tagline;
-                }
-
-                if (plusUser.HasBraggingRights)
-                {
-                    // mBraggingRights.Text += plusUser.HasBraggingRights;
-                }
-
-                if (plusUser.HasRelationshipStatus)
-                {
-                    switch (plusUser.RelationshipStatus)
-                    {
-                        case 0:
-                            //  mRelationship.Text += "Single";
-                            break;
-
-                        case 1:
-                            //  mRelationship.Text += "In a relationship";
-                            break;
-
-                        case 2:
-                            //   mRelationship.Text += "Engaged";
-                            break;
-
-                        case 3:
-                            //   mRelationship.Text += "Married";
-                            break;
-
-                        case 4:
-                            //mRelationship.Text += "It's complicated";
-                            break;
-
-                        case 5:
-                            //  mRelationship.Text += "In an open relationship";
-                            break;
-
-                        case 6:
-                            //  mRelationship.Text += "Widowed";
-                            break;
-
-                        case 7:
-                            //  mRelationship.Text += "In a domestic partnership";
-                            break;
-
-                        case 8:
-                            //  mRelationship.Text += "In a civil union";
-                            break;
-
-                        default:
-                            //   mRelationship.Text += "Unknown";
-                            break;
-                    }
-                }
-
-                if (plusUser.HasGender)
-                {
-                    switch (plusUser.Gender)
-                    {
-                        case 0:
-                            // mGender.Text += "Male";
-                            break;
-
-                        case 1:
-                            //  mGender.Text += "Female";
-                            break;
-
-                        case 2:
-                            //  mGender.Text += "Other";
-                            break;
-
-                        default:
-                            //  mGender.Text += "Unknown";
-                            break;
-                    }
-                }
-
-                mInfoPopulated = true;
-            }
-        }
-
-        public void OnConnectionSuspended(int cause)
-        {
-            throw new NotImplementedException();
-        }
-
         public void OnConnectionFailed(ConnectionResult result)
         {
             if (!mIntentinProgress)
@@ -238,9 +131,7 @@ namespace BitCWallet
         {
             base.OnStop();
             if (mGoogleApiClient.IsConnected)
-            {
                 mGoogleApiClient.Disconnect();
-            }
         }
 
         protected override void OnStart()
@@ -248,7 +139,6 @@ namespace BitCWallet
             base.OnStart();
             enc = new Encryption();
             walletInfo = new WalletsInfo();
-
             if (WIFI)
             {
                 mGoogleApiClient = new GoogleApiClient.Builder(this, this, this).AddApi(PlusClass.API)
@@ -259,23 +149,19 @@ namespace BitCWallet
             }
         }
 
-
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             act = this;
-
             netconn = new Abstract_Net();
             WIFI = netconn.WifiState(this);
             BottomNavigationView navigation = FindViewById<BottomNavigationView>(Resource.Id.navigation);
             navigation.SetOnNavigationItemSelectedListener(this);
-
             pg = new InitialisePages();
             fm = SupportFragmentManager;
             viewpager = FindViewById(Resource.Id.pager1) as ViewPager;
             AdjustPages();
-
         }
 
         private void AdjustPages()
@@ -287,42 +173,9 @@ namespace BitCWallet
                     listofpages.Add(InitialisePages.mWalletsPage);
                     listofpages.Add(InitialisePages.mTransactionsPage);
                     listofpages.Add(InitialisePages.mAPIPage);
-
                     adapter = new CustomFragmentAdapter(listofpages, fm, this);
                     viewpager.Adapter = adapter;
-                    viewpager.OffscreenPageLimit = adapter.Count;
-               
-            }
-        }
-
-        void Functions()
-        {
-            Blockchain phillyCoin = new Blockchain();
-            phillyCoin.AdditionOf_Block(new Block() { TimeStamp = DateTime.Now, PreviousHash = null, Data = "{sender:A,receiver:B,UTXO:10}" });
-            phillyCoin.AdditionOf_Block(new Block() { TimeStamp = DateTime.Now, PreviousHash = null, Data = "{sender:B,receiver:A,UTXO:5}" });
-            phillyCoin.AdditionOf_Block(new Block() { TimeStamp = DateTime.Now, PreviousHash = null, Data = "{sender:B,receiver:A,UTXO:5}" });
-
-            Console.WriteLine(phillyCoin.IsValid());
-            getSchema_InsightBitPayCom<SchemaInsightBitPayCom>("1Cdid9KFAaatwczBwBttQcwXYCpvK8h7FK");
-
-        }
-
-
-        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
-        {
-            if (requestCode == 0)
-            {
-                if (resultCode != Result.Ok)
-                {
-                    //  mSignInClicked = false;
-                }
-
-                //  mIntentInProgress = false;
-
-                if (!mGoogleApiClient.IsConnecting)
-                {
-                    mGoogleApiClient.Connect();
-                }
+                    viewpager.OffscreenPageLimit = adapter.Count;              
             }
         }
 
@@ -346,35 +199,7 @@ namespace BitCWallet
                 mGoogleApiClient.Connect();
             }
         }
-
-        public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Permission[] grantResults)
-        {
-            base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
-            switch (requestCode)
-            {
-                case RequestCameraPermisionID:
-                    {
-                        if (grantResults[0] == Permission.Granted)
-                        {
-                            if (Android.Support.V4.Content.ContextCompat.CheckSelfPermission(ApplicationContext, Manifest.Permission.Camera) != Permission.Granted)
-                            {
-                                ActivityCompat.RequestPermissions(this, new string[] { Manifest.Permission.Camera }, RequestCameraPermisionID);
-                                return;
-                            }
-                            try
-                            {
-                                // cameraSource.Start(surfaceView.Holder);
-                            }
-                            catch (InvalidOperationException)
-                            {
-                            }
-                        }
-                    }
-
-                    break;
-            }
-        }
-
+        
         async void getSchema_InsightBitPayCom<T>(string urladress) where T : class
         {
             using (WebClient client = new WebClient())
@@ -396,17 +221,7 @@ namespace BitCWallet
                 catch (WebException e) { Console.WriteLine(e.Message); return; }
             }
         }
-        private bool IsValidJson(string strInput)
-        {
-            strInput = strInput.Trim();
-            if ((strInput.StartsWith("{") && strInput.EndsWith("}")) || (strInput.StartsWith("[") && strInput.EndsWith("]")))
-            {
-                try { var obj = JToken.Parse(strInput); return true; }
-                catch (JsonReaderException jex) { Console.WriteLine(jex.Message); return false; }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); return false; }
-            }
-            else { return false; }
-        }
+   
         public T Deserialize<T>(string UTF8string)
         {
             return JsonConvert.DeserializeObject<T>(UTF8string);
@@ -415,37 +230,6 @@ namespace BitCWallet
         public class ObjectEnumerable<T> : object
         {
             public T Objadjust { get; set; }
-        }
-
-        public class Blockchain
-        {
-            public IList<Block> Chain = new List<Block>();
-            public Blockchain() { AddGenesisBlock(); }
-            public Block @Genesis() { return new Block { TimeStamp = DateTime.Now, PreviousHash = null, Data = "{}" }; }
-            public Block @GetLatestBlock() { return Chain[Chain.Count - 1]; }
-            public void @AddGenesisBlock() { Chain.Add(Genesis()); }
-            public void @AdditionOf_Block(Block block)
-            {
-                Block latestBlock = GetLatestBlock();
-                block.Index = latestBlock.Index + 1;
-                block.PreviousHash = latestBlock.Hash;
-                block.Hash = block.ComputingHash();
-                block.Mine(this.Difficulty);
-                Chain.Add(block);
-            }
-            public int Difficulty { set; get; } = 2;
-            public bool IsValid()
-            {
-                if (Chain == null) return false;
-                for (int i = 1; i < Chain.Count; i++) // Avoid Genesis as the has is null
-                {
-                    Block currentBlock = Chain[i];
-                    Block previousBlock = Chain[i - 1];
-                    if (currentBlock.Hash != currentBlock.ComputingHash()) return false;
-                    if (currentBlock.PreviousHash != previousBlock.Hash) return false;
-                }
-                return true;
-            }
         }
 
         public class Block
