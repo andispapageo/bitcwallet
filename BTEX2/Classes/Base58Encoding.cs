@@ -20,8 +20,6 @@ namespace BitCWallet
             var dataWithCheckSum = ConcatArrays(data, checkSum);
             return dataWithCheckSum;
         }
-        
-        //checksum = SHA#%^(SHA256(prefix + data))
         private static byte[] _GetCheckSum(byte[] data)
         {
             SHA256 sha256 = new SHA256Managed();
@@ -61,11 +59,6 @@ namespace BitCWallet
         {
             var dataWithCheckSum = DecodePlain(data);
             var dataWithoutCheckSum = _VerifyAndRemoveCheckSum(dataWithCheckSum);
-            if (dataWithoutCheckSum == null)
-            {
-                throw new FormatException("Base58 checksum is invalid");
-            }
-
             return dataWithoutCheckSum;
         }
 
@@ -75,23 +68,16 @@ namespace BitCWallet
             for (var i = 0; i < data.Length; i++)
             {
                 var digit = DIGITS.IndexOf(data[i]); 
-                if (digit < 0)
-                {
-                    throw new FormatException(string.Format("Invalid Base58 character `{0}` at position {1}", data[i], i));
-                }
-
+                if (digit < 0) return;
                 intData = intData * 58 + digit;
             }
 
             var leadingZeroCount = data.TakeWhile(c => c == '1').Count();
             var leadingZeros = Enumerable.Repeat((byte)0, leadingZeroCount);
-
             var bytesWithoutLeadingZeros = longToBytes(intData).Reverse().SkipWhile(b => b == 0);//strip sign byte
             var result = leadingZeros.Concat(bytesWithoutLeadingZeros).ToArray();
             return result;
         }
-
-        
 
         public static byte[] longToBytes(long x)
         {
@@ -102,16 +88,13 @@ namespace BitCWallet
         {
             var result = new T[arrays.Sum(arr => arr.Length)];
             var offset = 0;
-
             foreach (var arr in arrays)
             {
                 Buffer.BlockCopy(arr, 0, result, offset, arr.Length);
                 offset += arr.Length;
             }
-
             return result;
         }
-
         public static T[] SubArray<T>(T[] arr, int start, int length)
         {
             var result = new T[length];
@@ -119,7 +102,6 @@ namespace BitCWallet
 
             return result;
         }
-
         public static T[] SubArray<T>(T[] arr, int start)
         {
             return SubArray(arr, start, arr.Length - start);
