@@ -71,23 +71,6 @@ namespace BitCWallet
             set { Preferences.GetString("ssPubKey", value); }
         }
 
-        int getKeyNumber
-        {
-            get { return Preferences.GetInt("keynum", 0); }
-        }
-
-        public static string userpsw
-        {
-            get { return Preferences.GetString("token", string.Empty); }
-            set { Preferences.GetString("token", value); }
-        }
-
-        public static string BitcoinPubKeyAddress
-        {
-            get { return Preferences.GetString("BitcoinPubKeyAddress", string.Empty); }
-            set { Preferences.GetString("BitcoinPubKeyAddress", value); }
-        }
-
         string this[int i]
         {
             get
