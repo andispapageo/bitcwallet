@@ -65,56 +65,9 @@ namespace BitCWallet.Pages
                         node.SendMessage(new InvPayload(InventoryType.MSG_TX, transcation.GetHash()));
                         node.SendMessage(new TxPayload(transcation));
                         Thread.Sleep(500);
-                    }
-                }
-            }
-        }
-
-       
-        private void RecycleList_Click(object sender, EventArgs e)
-        {
-            tgl = !tgl;
-            if (tgl)
-            {
-                QBitNinjaClient client = new QBitNinjaClient(MainActivity.net);
-             
-                foreach (var txID in BitCoinWallet.TransactionsID)
-                {
-                    
-                    var transactionId = uint256.Parse(txID);
-                  
-                    GetTransactionResponse transactionResponse = client.GetTransaction(transactionId).Result;
-                    var s = transactionResponse.Transaction.ToString();
-                    List<ICoin> receivedCoins = transactionResponse.ReceivedCoins;
-                    Transaction transaction = transactionResponse.Transaction;
-
-                    foreach (var coin in receivedCoins)
-                    {
-                        Money amount = (Money)coin.Amount;
-                        Console.WriteLine(amount.ToDecimal(MoneyUnit.BTC));
-                        var paymentScript = coin.TxOut.ScriptPubKey;
-
-                        Console.WriteLine(paymentScript);
-                        var address = paymentScript.GetDestinationAddress(MainActivity.net);
-                        Console.WriteLine(address);
                     }
-                    var outputs = transaction.Outputs;
-                    foreach (TxOut output in outputs)
-                    {
-                        Money amount = output.Value;
 
-                        Console.WriteLine(amount.ToDecimal(MoneyUnit.BTC));
-                        var paymentScript = output.ScriptPubKey;
-                        Console.WriteLine(paymentScript);  // It's the ScriptPubKey
-                        var address = paymentScript.GetDestinationAddress(Network.Main);
-                        Console.WriteLine(address);
-                        Console.WriteLine();
-                    }
                 }
-            }
-            else
-            {
-
             }
         }
 
@@ -153,89 +106,5 @@ namespace BitCWallet.Pages
             public string type { get; set; }
         }
         WalletsClass walletObject;
-
-        public void TransferFunds(string ssPrivateKey, 
-            decimal ValuetoTransfer, 
-            string ssToAddress_ClientB,
-            bool found_orRefund,
-            out WalletsClass walletObject,
-            out bool success,
-            out Transaction transcation)
-        {
-
-            success = false;
-            transcation = null;
-            decimal addBlnc = 0;
-            decimal addBlnceConf = 0;
-            string tid = string.Empty;
-            walletObject = new WalletsClass();
-
-            BitcoinSecret bitcoinPrivateKey = new BitcoinSecret(ssPrivateKey);
-            var network = bitcoinPrivateKey.Network;
-            var fromAddress = bitcoinPrivateKey.GetAddress().ToString();
-            var client = new QBitNinjaClient(network);
-
-            var transactionId = uint256.Parse(tid);
-            var transactionResponse = client.GetTransaction(transactionId).Result;
-          
-            OutPoint outPointToSpend = null;
-            foreach (var coin in transactionResponse.ReceivedCoins)
-            {
-                if (Equals(coin.TxOut.ScriptPubKey, bitcoinPrivateKey.ScriptPubKey))
-                {
-                    outPointToSpend = coin.Outpoint;
-                }
-            }
-
-            var transfer = Transaction.Create(MainActivity.net);
-            transfer.Inputs.Add(new TxIn() { PrevOut = outPointToSpend });
-
-            var toAddress = BitcoinAddress.Create(ssToAddress_ClientB, MainActivity.net);
-
-            var ValuetoTransferConv = new Money(ValuetoTransfer, MoneyUnit.BTC);
-            var minerFee = new Money(0.0002m, MoneyUnit.BTC);
-            //tximanout == 0.001  - 0.0002 -0.0002
-            var txInAmount = (Money)transactionResponse.ReceivedCoins[(int)outPointToSpend.N].Amount;
-            var changeAmount = txInAmount.ToDecimal(MoneyUnit.BTC) - ValuetoTransferConv.ToDecimal(MoneyUnit.BTC) - minerFee.ToDecimal(MoneyUnit.BTC);
-            if (changeAmount > 0)
-            {
-                TxOut valuetoAddress_B = new TxOut() { Value = new Money(ValuetoTransfer, MoneyUnit.BTC), ScriptPubKey = toAddress.ScriptPubKey };
-                TxOut changeTxOut = new TxOut() { Value = new Money(changeAmount, MoneyUnit.BTC), ScriptPubKey = bitcoinPrivateKey.ScriptPubKey };
-                transfer.Outputs.Add(valuetoAddress_B);
-                transfer.Outputs.Add(changeTxOut);
-            }
-            else
-            {
-                MainActivity.act.RunOnUiThread(() =>
-                {
-                    Toast.MakeText(MainActivity.act, "The total amount cannot be negative" +
-                    " Please add a smaller amount to total or miner fee", ToastLength.Long).Show();
-                });
-                return;
-            }
-            transfer.Sign(bitcoinPrivateKey, transactionResponse.ReceivedCoins.ToArray());
-            BroadcastResponse brResp = client.Broadcast(transfer).Result;
-
-            if (!brResp.Success)
-            {
-                success = false;
-                MainActivity.act.RunOnUiThread(() =>
-                {
-                    Toast.MakeText(MainActivity.act, "BroadCastResponse Error" + brResp.Error.ErrorCode + " : " + brResp.Error.Reason, ToastLength.Long).Show();
-                });
-                transcation = null;
-                return;
-            }
-            else
-            {
-                walletObject.source = found_orRefund ? "A" : "B";
-                walletObject.destination = found_orRefund ? "B" : "A";
-                walletObject.type = found_orRefund ? "Fund" : "Refund";
-                walletObject.amount = ValuetoTransfer;
-
-                success = brResp.Success;
-                transcation = transfer;
-            }
         }
-    }
 }
