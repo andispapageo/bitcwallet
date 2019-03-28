@@ -62,36 +62,6 @@ namespace BitCWallet.Pages
             if (encrypt.success)
                 CreateWalletNBitcoit();
         }
-      
-        public async void CreateWalletNBitcoit()
-        {
-            var pass = "andis";
-         //   var res = createPassPharaseCOde(pass);
-           walletWords = await CreateWallet();
-            var walletworlds2 = await CreateWallet();
-
-            if (walletWords == string.Empty) return;
-            else
-            {
-                var showDialog = new DialogShowWords();
-                showDialog.mSeed = walletWords;
-                showDialog.Show(MainActivity.fm, "seed");
-                MainActivity.Preferences.Edit().PutString("mnemonic", walletWords).Apply();
-              
-                if (await BitCoinWallet.GenerateAdd_HDWalletBIP44(walletWords, pass , keyA) != null)
-                {
-                    Console.WriteLine("Wallet generated successfully!!!!!!!!!!!!!!");
-                }
-
-                if (await BitCoinWallet.GenerateAdd_HDWalletBIP44(walletworlds2, "andreas", keyA) != null)
-                {
-                    Console.WriteLine("Wallet generated successfully!!!!!!!!!!!!!!");
-                }
-
-              
-            }
-        }
-
         public static string createPassPharaseCOde( string password)
         {
             BitcoinPassphraseCode passphraseCode = new BitcoinPassphraseCode(password,MainActivity.net, null);
