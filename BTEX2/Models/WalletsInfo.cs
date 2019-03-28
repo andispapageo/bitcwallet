@@ -1,10 +1,4 @@
-﻿
-
-
 namespace BitCWallet.Models
 {
-    public class WalletsInfo
-    {
-        public decimal BalanceBitCoin { get; set; }
-    }
+    public class WalletsInfo{public decimal BalanceBitCoin { get; set; }}
 }
