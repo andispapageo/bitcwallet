@@ -28,8 +28,6 @@ namespace BitCWallet.Pages
 
         private void RequestGet(string url)
         {
-            try
-            {
                 if (MainActivity.WIFI)
                 {
                     if (url == string.Empty) return;
@@ -42,18 +40,12 @@ namespace BitCWallet.Pages
                             .OrderBy(x => x.BaseCurrencyLong)
                             .ThenBy(x => x.MarketCurrencyLong).ToList());
                 }
-            }
-            catch(Exception e)
-            {
-
-            }
         }
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             thisVIew  = inflater.Inflate(Resource.Layout.apiPage, container, false);
             var layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.Vertical);
-
             recycler.SetLayoutManager(layoutManager);
             recycler.SetAdapter(apiAdaptor);
             recycler.Elevation = 21f;
@@ -63,7 +55,10 @@ namespace BitCWallet.Pages
         public Task<string> GetUSD(string MarketName)
         {
             if (root == null || root.Result == null) return Task.FromResult(string.Empty);
-            return Task.FromResult((from n in root.Result where n.MarketName == MarketName select n.MinTradeSize).FirstOrDefault());
+            return Task.FromResult((from n in root.Result 
+            where n.MarketName 
+            == MarketName select n.MinTradeSize)
+            .FirstOrDefault());
         }
     }
 }
