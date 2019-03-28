@@ -17,7 +17,6 @@ using NBitcoin.Protocol;
 using Newtonsoft.Json.Linq;
 using QBitNinja.Client;
 using QBitNinja.Client.Models;
-
 namespace BitCWallet.Pages
 {
     public class TransactionsPage : Fragment
@@ -30,18 +29,15 @@ namespace BitCWallet.Pages
         Button send { get { return thisView.FindViewById(Resource.Id.sendButton) as Button; } }
         RecyclerView recycleList { get { return thisView.FindViewById(Resource.Id.recycleList) as RecyclerView; } }
         Button toggle { get { return thisView.FindViewById(Resource.Id.toggle) as Button; } }
-        bool tgl { get; set; }
+        bool tgl { get; set; }        
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             thisView = inflater.Inflate(Resource.Layout.transactionslayout, container, false);
-
             fromAddress.EditText.Text = MainActivity.BitcoinPubKeyAddress;
             transAdapter = new TranscactionsRecycler(new WalletsClass[0]);
             var layoutManager = new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.Vertical);
             recycleList.SetLayoutManager(layoutManager);
             recycleList.SetAdapter(transAdapter);
-
-         //   GetMinerFee();
             send.Click += Send_Click1;
             toggle.Click += RecycleList_Click;
             return thisView;
@@ -66,7 +62,6 @@ namespace BitCWallet.Pages
                         node.SendMessage(new TxPayload(transcation));
                         Thread.Sleep(500);
                     }
-
                 }
             }
         }
@@ -75,22 +70,12 @@ namespace BitCWallet.Pages
         {
             using (WebClient client = new WebClient())
             {
-                client.Headers.Add(HttpRequestHeader.ContentType, "application/json");
-                string responseString;
-
-                try
-                {
+                client.Headers.Add(HttpRequestHeader.ContentType, "application/json"); string responseString;
                     JObject response = null;
                     var Uriurl = new Uri($"https://bitcoinfees.21.co/api/v1/fees/recommended");
                     var responseBytes = await client.DownloadDataTaskAsync(Uriurl);
                     responseString = Encoding.UTF8.GetString(responseBytes);
                     response = JObject.Parse(responseString);
-
-                }
-                catch (WebException e)
-                {
-
-                }
             }
 
         }
@@ -106,5 +91,5 @@ namespace BitCWallet.Pages
             public string type { get; set; }
         }
         WalletsClass walletObject;
-        }
+     }
 }
