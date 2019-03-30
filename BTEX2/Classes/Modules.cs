@@ -18,8 +18,8 @@ namespace BitCWallet
         private static string RequestServer(string methodName, List<string> parameters) //Javascript Object Notation RPC cli
         {
             string ServerIP = "http://localhost.:8332";
-            string UserName = "Andis";
-            string password = "221286";
+            string UserName = "*****";
+            string password = "*************";
             string data = string.Empty;
 
             var webRequest = (HttpWebRequest)WebRequest.Create(ServerIP);
